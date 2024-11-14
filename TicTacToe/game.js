@@ -21,8 +21,7 @@ let board = [
     [0, 0, 0]
 ];
 
-let playerTurn = 1; // 1 for cross (human), 2 for circle (AI)
-
+let playerTurn = 1;
 function drawBoard() {
     for (let row = 1; row < ROWS; row++) {
         ctx.beginPath();
@@ -41,7 +40,6 @@ function drawBoard() {
         ctx.stroke();
     }
 }
-
 function drawCross(x, y) {
     ctx.beginPath();
     ctx.moveTo(x * SQSIZE + OFFSET, y * SQSIZE + OFFSET);
@@ -52,7 +50,6 @@ function drawCross(x, y) {
     ctx.strokeStyle = CROSS_COLOR;
     ctx.stroke();
 }
-
 function drawCircle(x, y) {
     ctx.beginPath();
     ctx.arc(x * SQSIZE + SQSIZE / 2, y * SQSIZE + SQSIZE / 2, RADIUS, 0, 2 * Math.PI);
@@ -60,7 +57,6 @@ function drawCircle(x, y) {
     ctx.strokeStyle = CIRC_COLOR;
     ctx.stroke();
 }
-
 function checkWinner() {
     for (let row = 0; row < ROWS; row++) {
         if (board[row][0] === board[row][1] && board[row][1] === board[row][2] && board[row][0] !== 0) {
@@ -80,7 +76,6 @@ function checkWinner() {
     }
     return 0;
 }
-
 function isBoardFull() {
     return board.every(row => row.every(cell => cell !== 0));
 }
@@ -121,7 +116,6 @@ function minimax(board, depth, isMaximizing) {
     }
 }
 
-// Get the best move for the AI
 function bestMove() {
     let bestScore = -Infinity;
     let move;
@@ -141,7 +135,6 @@ function bestMove() {
     return move;
 }
 
-// Handle player moves
 canvas.addEventListener('click', (event) => {
     const rect = canvas.getBoundingClientRect();
     const x = Math.floor((event.clientX - rect.left) / SQSIZE);
@@ -153,18 +146,20 @@ canvas.addEventListener('click', (event) => {
 
         if (checkWinner()) {
             setTimeout(() => alert(`Player ${checkWinner()} wins!`), 100);
-            resetGame();
+            resetGame;
             return;
         }
+        else {
+            playerTurn = 2;
+        }
 
-        playerTurn = 2;
         const aiMove = bestMove();
         board[aiMove.row][aiMove.col] = 2;
         drawCircle(aiMove.col, aiMove.row);
 
         if (checkWinner()) {
             setTimeout(() => alert(`Player ${checkWinner()} wins!`), 100);
-            setTimeout(resetGame(), 500);
+            resetGame();
         } else {
             playerTurn = 1;
         }
