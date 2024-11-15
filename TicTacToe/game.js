@@ -118,6 +118,19 @@ function minimax(board, depth, isMaximizing) {
 }
 
 function bestMove() {
+    for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col < COLS; col++) {
+            if (board[row][col] === 0) {
+                board[row][col] = 2; 
+                if (checkWinner() === 2) {
+                    board[row][col] = 0; 
+                    return { row, col }; 
+                }
+                board[row][col] = 0; 
+            }
+        }
+    }
+    
     let bestScore = -Infinity;
     let move;
     for (let row = 0; row < ROWS; row++) {
@@ -172,7 +185,7 @@ canvas.addEventListener('click', (event) => {
 
         if (checkWinner()) {
             setTimeout(() => {
-                alert(`Player ${checkWinner()} wins!`);
+                alert(`AI wins!`);
                 resetGame();
             }, 250);
         } 
