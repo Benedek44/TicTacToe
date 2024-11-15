@@ -20,8 +20,8 @@ let board = [
     [0, 0, 0],
     [0, 0, 0]
 ];
-
 let playerTurn = 1;
+
 function drawBoard() {
     for (let row = 1; row < ROWS; row++) {
         ctx.beginPath();
@@ -57,6 +57,7 @@ function drawCircle(x, y) {
     ctx.strokeStyle = CIRC_COLOR;
     ctx.stroke();
 }
+
 function checkWinner() {
     for (let row = 0; row < ROWS; row++) {
         if (board[row][0] === board[row][1] && board[row][1] === board[row][2] && board[row][0] !== 0) {
@@ -83,18 +84,18 @@ function isBoardFull() {
 function minimax(board, depth, isMaximizing) {
     let winner = checkWinner();
 
-    if (winner === 1) return -10; // Human wins
-    if (winner === 2) return 10; // AI wins
-    if (isBoardFull()) return 0; // Draw
+    if (winner === 1) return -10;
+    if (winner === 2) return 10;
+    if (isBoardFull()) return 0;
 
     if (isMaximizing) {
         let bestScore = -Infinity;
         for (let row = 0; row < ROWS; row++) {
             for (let col = 0; col < COLS; col++) {
                 if (board[row][col] === 0) {
-                    board[row][col] = 2; // AI move
+                    board[row][col] = 2;
                     let score = minimax(board, depth + 1, false);
-                    board[row][col] = 0; // Undo the move
+                    board[row][col] = 0;
                     bestScore = Math.max(score, bestScore);
                 }
             }
@@ -105,9 +106,9 @@ function minimax(board, depth, isMaximizing) {
         for (let row = 0; row < ROWS; row++) {
             for (let col = 0; col < COLS; col++) {
                 if (board[row][col] === 0) {
-                    board[row][col] = 1; // Human move
+                    board[row][col] = 1;
                     let score = minimax(board, depth + 1, true);
-                    board[row][col] = 0; // Undo the move
+                    board[row][col] = 0;
                     bestScore = Math.min(score, bestScore);
                 }
             }
@@ -122,9 +123,9 @@ function bestMove() {
     for (let row = 0; row < ROWS; row++) {
         for (let col = 0; col < COLS; col++) {
             if (board[row][col] === 0) {
-                board[row][col] = 2; // AI move
+                board[row][col] = 2; 
                 let score = minimax(board, 0, false);
-                board[row][col] = 0; // Undo the move
+                board[row][col] = 0; 
                 if (score > bestScore) {
                     bestScore = score;
                     move = { row, col };
@@ -145,22 +146,45 @@ canvas.addEventListener('click', (event) => {
         drawCross(x, y);
 
         if (checkWinner()) {
-            setTimeout(() => alert(`Player ${checkWinner()} wins!`), 100);
-            resetGame;
+            setTimeout(() => {
+                alert(`Player ${checkWinner()} wins!`);
+                resetGame();
+            }, 250);
             return;
         }
+        else if (isBoardFull())
+        {
+            setTimeout(() => {
+                alert(`It's a draw!`);
+                resetGame();
+            }, 250);
+            return;
+        } 
         else {
             playerTurn = 2;
         }
 
         const aiMove = bestMove();
         board[aiMove.row][aiMove.col] = 2;
-        drawCircle(aiMove.col, aiMove.row);
+        setTimeout(() => {
+            drawCircle(aiMove.col, aiMove.row);
+        }, 150);
 
         if (checkWinner()) {
-            setTimeout(() => alert(`Player ${checkWinner()} wins!`), 100);
-            resetGame();
-        } else {
+            setTimeout(() => {
+                alert(`Player ${checkWinner()} wins!`);
+                resetGame();
+            }, 250);
+        } 
+        else if (isBoardFull())
+        {
+            setTimeout(() => {
+                alert("It's a draw!");
+                resetGame();
+            }, 250);
+            return;
+        } 
+        else {
             playerTurn = 1;
         }
     }
