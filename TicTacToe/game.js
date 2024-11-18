@@ -21,6 +21,7 @@ let board = [
     [0, 0, 0]
 ];
 let playerTurn = 1;
+let isPlayerVsBot = true;
 
 function drawBoard() {
     for (let row = 1; row < ROWS; row++) {
@@ -177,22 +178,48 @@ canvas.addEventListener('click', (event) => {
             playerTurn = 2;
         }
 
-        const aiMove = bestMove();
-        board[aiMove.row][aiMove.col] = 2;
-        setTimeout(() => {
-            drawCircle(aiMove.col, aiMove.row);
-        }, 150);
+        if (isPlayerVsBot) {
+            const aiMove = bestMove();
+            board[aiMove.row][aiMove.col] = 2;
+            setTimeout(() => {
+                drawCircle(aiMove.col, aiMove.row);
+            }, 150);
+
+            if (checkWinner()) {
+                setTimeout(() => {
+                    alert(`Bot wins!`);
+                    resetGame();
+                }, 250);
+            } 
+            else if (isBoardFull())
+            {
+                setTimeout(() => {
+                    alert("It's a draw!");
+                    resetGame();
+                }, 250);
+                return;
+            } 
+            else {
+                playerTurn = 1;
+            }
+        } else {
+            playerTurn = 2;
+        }
+    } else if (board[y][x] === 0 && playerTurn === 2 && !isPlayerVsBot) {
+        board[y][x] = 2;
+        drawCircle(x, y);
 
         if (checkWinner()) {
             setTimeout(() => {
-                alert(`AI wins!`);
+                alert(`Player ${checkWinner()} wins!`);
                 resetGame();
             }, 250);
-        } 
+            return;
+        }
         else if (isBoardFull())
         {
             setTimeout(() => {
-                alert("It's a draw!");
+                alert(`It's a draw!`);
                 resetGame();
             }, 250);
             return;
@@ -214,4 +241,17 @@ function resetGame() {
     playerTurn = 1;
 }
 
+function switchGameMode(isBotMode) {
+    isPlayerVsBot = isBotMode;
+    resetGame();
+    document.getElementById('gameMode').textContent = `Current Mode: ${isBotMode ? 'Player vs Bot' : 'Player vs Player'}`;
+}
+
+document.getElementById('modeButton').addEventListener('click', () => {
+    isPlayerVsBot = !isPlayerVsBot;
+    document.getElementById('modeButton').textContent = isPlayerVsBot ? 'Switch to Player vs Player' : 'Switch to Player vs Bot';
+    switchGameMode(isPlayerVsBot);
+});
+
 drawBoard();
+document.getElementById('gameMode').textContent = 'Current Mode: Player vs Player';

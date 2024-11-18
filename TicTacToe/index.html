@@ -5,16 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic-Tac-Toe AI</title>
     <style>
-        body { display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #333; }
-        canvas { background-color: #fff; }
+        body { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; background-color: #333; }
+        canvas { background-color: #fff; margin-top: 20px; }
         
         @media (max-width: 600px) {
             body { flex-direction: column; }
             canvas { width: 100%; height: auto; }
         }
+        #gameMode {
+            color: #fff;
+            font-weight: bold;
+            font-size: large;
+        }
+        #modeButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
+    <button id="modeButton">Switch to Playervs Player</button>
+    <p id="gameMode">Current Mode: Player vs Bot</p>
     <canvas id="gameCanvas" width="600" height="600"></canvas>
     <script src="game.js"></script>
 </body>
