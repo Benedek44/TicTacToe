@@ -17,7 +17,7 @@
             font-weight: bold;
             font-size: large;
         }
-        #modeButton {
+        .modeButton {
             margin-top: 20px;
             padding: 10px 20px;
             background-color: #4CAF50;
@@ -25,12 +25,21 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            margin-right: 10px;
+        }
+        #buttonContainer {
+            display: flex;
+            justify-content: center;
         }
     </style>
 </head>
 <body>
-    <button id="modeButton">Switch to Playervs Player</button>
-    <p id="gameMode">Current Mode: Player vs Bot</p>
+    <p id="gameMode">Current Mode: Player vs Player</p>
+    <div id="buttonContainer">
+        <button id="pvpButton" class="modeButton">Player vs Player</button>
+        <button id="randomBotButton" class="modeButton">Player vs Random Bot</button>
+        <button id="bestBotButton" class="modeButton">Player vs Best Bot</button>
+    </div>
     <canvas id="gameCanvas" width="600" height="600"></canvas>
     <script src="game.js"></script>
 </body>

@@ -21,7 +21,7 @@ let board = [
     [0, 0, 0]
 ];
 let playerTurn = 1;
-let isPlayerVsBot = true;
+let currentMode = 'pvp';  // Possible values: 'pvp', 'randomBot', 'bestBot'
 
 function drawBoard() {
     for (let row = 1; row < ROWS; row++) {
@@ -118,20 +118,19 @@ function minimax(board, depth, isMaximizing) {
     }
 }
 
-function bestMove() {
+function randomMove() {
+    let availableMoves = [];
     for (let row = 0; row < ROWS; row++) {
         for (let col = 0; col < COLS; col++) {
             if (board[row][col] === 0) {
-                board[row][col] = 2; 
-                if (checkWinner() === 2) {
-                    board[row][col] = 0; 
-                    return { row, col }; 
-                }
-                board[row][col] = 0; 
+                availableMoves.push({ row, col });
             }
         }
     }
-    
+    return availableMoves[Math.floor(Math.random() * availableMoves.length)];
+}
+
+function bestMove() {
     let bestScore = -Infinity;
     let move;
     for (let row = 0; row < ROWS; row++) {
@@ -166,46 +165,39 @@ canvas.addEventListener('click', (event) => {
             }, 250);
             return;
         }
-        else if (isBoardFull())
-        {
+        if (isBoardFull()) {
             setTimeout(() => {
                 alert(`It's a draw!`);
                 resetGame();
             }, 250);
             return;
-        } 
-        else {
-            playerTurn = 2;
         }
+        playerTurn = 2;
 
-        if (isPlayerVsBot) {
-            const aiMove = bestMove();
+        if (currentMode === 'randomBot' || currentMode === 'bestBot') {
+            const aiMove = (currentMode === 'randomBot') ? randomMove() : bestMove();
             board[aiMove.row][aiMove.col] = 2;
             setTimeout(() => {
                 drawCircle(aiMove.col, aiMove.row);
-            }, 150);
-
-            if (checkWinner()) {
-                setTimeout(() => {
-                    alert(`Bot wins!`);
-                    resetGame();
-                }, 250);
-            } 
-            else if (isBoardFull())
-            {
-                setTimeout(() => {
-                    alert("It's a draw!");
-                    resetGame();
-                }, 250);
-                return;
-            } 
-            else {
-                playerTurn = 1;
-            }
+                if (checkWinner()) {
+                    setTimeout(() => {
+                        alert(`Player ${checkWinner()} wins!`);
+                        resetGame();
+                    }, 250);
+                } else if (isBoardFull()) {
+                    setTimeout(() => {
+                        alert(`It's a draw!`);
+                        resetGame();
+                    }, 250);
+                } else {
+                    playerTurn = 1;
+                }
+            }, 250);
         } else {
             playerTurn = 2;
         }
-    } else if (board[y][x] === 0 && playerTurn === 2 && !isPlayerVsBot) {
+    }
+    else if (board[y][x] === 0 && playerTurn === 2 && currentMode === 'pvp') {
         board[y][x] = 2;
         drawCircle(x, y);
 
@@ -214,17 +206,12 @@ canvas.addEventListener('click', (event) => {
                 alert(`Player ${checkWinner()} wins!`);
                 resetGame();
             }, 250);
-            return;
-        }
-        else if (isBoardFull())
-        {
+        } else if (isBoardFull()) {
             setTimeout(() => {
                 alert(`It's a draw!`);
                 resetGame();
             }, 250);
-            return;
-        } 
-        else {
+        } else {
             playerTurn = 1;
         }
     }
@@ -241,17 +228,20 @@ function resetGame() {
     playerTurn = 1;
 }
 
-function switchGameMode(isBotMode) {
-    isPlayerVsBot = isBotMode;
+document.getElementById('pvpButton').addEventListener('click', () => {
+    currentMode = 'pvp';
+    document.getElementById('gameMode').textContent = 'Current Mode: Player vs Player';
     resetGame();
-    document.getElementById('gameMode').textContent = `Current Mode: ${isBotMode ? 'Player vs Bot' : 'Player vs Player'}`;
-}
-
-document.getElementById('modeButton').addEventListener('click', () => {
-    isPlayerVsBot = !isPlayerVsBot;
-    document.getElementById('modeButton').textContent = isPlayerVsBot ? 'Switch to Player vs Player' : 'Switch to Player vs Bot';
-    switchGameMode(isPlayerVsBot);
+});
+document.getElementById('randomBotButton').addEventListener('click', () => {
+    currentMode = 'randomBot';
+    document.getElementById('gameMode').textContent = 'Current Mode: Player vs Random Bot';
+    resetGame();
+});
+document.getElementById('bestBotButton').addEventListener('click', () => {
+    currentMode = 'bestBot';
+    document.getElementById('gameMode').textContent = 'Current Mode: Player vs Best Bot';
+    resetGame();
 });
 
 drawBoard();
-document.getElementById('gameMode').textContent = 'Current Mode: Player vs Player';
